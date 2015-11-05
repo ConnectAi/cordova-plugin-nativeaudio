@@ -16,6 +16,8 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 
+import java.io.FileDescriptor;
+
 public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletionListener {
 
 	private static final int INVALID = 0;
@@ -24,29 +26,29 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 	private static final int PLAYING = 3;
 	private static final int PENDING_LOOP = 4;
 	private static final int LOOPING = 5;
-	
+
 	private MediaPlayer mp;
 	private int state;
     Callable<Void> completeCallback;
 
-	public NativeAudioAssetComplex( AssetFileDescriptor afd, float volume)  throws IOException
+	public NativeAudioAssetComplex(FileDescriptor fd, float volume)  throws IOException
 	{
 		state = INVALID;
 		mp = new MediaPlayer();
         mp.setOnCompletionListener(this);
         mp.setOnPreparedListener(this);
-		mp.setDataSource( afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-		mp.setAudioStreamType(AudioManager.STREAM_MUSIC); 
+		mp.setDataSource(fd, 0, -1);
+		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mp.setVolume(volume, volume);
 		mp.prepare();
 	}
-	
+
 	public void play(Callable<Void> completeCb) throws IOException
 	{
         completeCallback = completeCb;
 		invokePlay( false );
 	}
-	
+
 	private void invokePlay( Boolean loop )
 	{
 		Boolean playing = ( mp.isLooping() || mp.isPlaying() );
@@ -109,32 +111,32 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 	        }
 	}
 
-	public void setVolume(float volume) 
+	public void setVolume(float volume)
 	{
 	        try
 	        {
 			mp.setVolume(volume,volume);
             	}
-            	catch (IllegalStateException e) 
+            	catch (IllegalStateException e)
 		{
                 // I don't know why this gets thrown; catch here to save app
 		}
 	}
-	
+
 	public void loop() throws IOException
 	{
 		invokePlay( true );
 	}
-	
+
 	public void unload() throws IOException
 	{
 		this.stop();
 		mp.release();
 	}
-	
-	public void onPrepared(MediaPlayer mPlayer) 
+
+	public void onPrepared(MediaPlayer mPlayer)
 	{
-		if (state == PENDING_PLAY) 
+		if (state == PENDING_PLAY)
 		{
 			mp.setLooping(false);
 			mp.seekTo(0);
@@ -154,7 +156,7 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 			mp.seekTo(0);
 		}
 	}
-	
+
 	public void onCompletion(MediaPlayer mPlayer)
 	{
 		if (state != LOOPING)
