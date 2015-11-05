@@ -17,6 +17,7 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 
 import java.io.FileDescriptor;
+import android.os.ParcelFileDescriptor;
 
 public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletionListener {
 
@@ -33,11 +34,13 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 
 	public NativeAudioAssetComplex(FileDescriptor fd, float volume)  throws IOException
 	{
+	    ParcelFileDescriptor pfd = ParcelFileDescriptor.fromFd(fd);
+
 		state = INVALID;
 		mp = new MediaPlayer();
         mp.setOnCompletionListener(this);
         mp.setOnPreparedListener(this);
-		mp.setDataSource(fd, 0, -1);
+		mp.setDataSource(fd, 0, pfd.getStatSize());
 		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mp.setVolume(volume, volume);
 		mp.prepare();
