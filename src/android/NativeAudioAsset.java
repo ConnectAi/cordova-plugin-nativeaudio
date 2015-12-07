@@ -35,6 +35,20 @@ public class NativeAudioAsset
 		}
 	}
 
+	public NativeAudioAsset(FileDescriptor fd, int numVoices, float volume) throws IOException
+	{
+		voices = new ArrayList<NativeAudioAssetComplex>();
+
+		if ( numVoices < 0 )
+			numVoices = 1;
+
+		for ( int x=0; x<numVoices; x++)
+		{
+			NativeAudioAssetComplex voice = new NativeAudioAssetComplex(fd, volume);
+			voices.add( voice );
+		}
+	}
+
 	public void play(Callable<Void> completeCb) throws IOException
 	{
 		NativeAudioAssetComplex voice = voices.get(playIndex);
