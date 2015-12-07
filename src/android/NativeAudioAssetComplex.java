@@ -34,7 +34,7 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 
 	public NativeAudioAssetComplex(AssetFileDescriptor afd, float volume)  throws IOException
 	{
-	    ParcelFileDescriptor pfd = ParcelFileDescriptor.dup(fd);
+	    //ParcelFileDescriptor pfd = ParcelFileDescriptor.dup(fd);
 
 		state = INVALID;
 		mp = new MediaPlayer();
