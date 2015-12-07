@@ -87,18 +87,19 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
 				}
 
 				String fullPath = assetPath;
+				FileDescriptor fd;
 				
 				// if it starts with a /, use a root path
 				if(fullPath.startsWith("/")) {
 					FileInputStream fileInputStream = new FileInputStream(new File(fullPath));
-					FileDescriptor fd = fileInputStream.getFD();
+					fd = fileInputStream.getFD();
 					
 				// use the android asset manager for everything else
 				} else {
 					Context ctx = cordova.getActivity().getApplicationContext();
 					AssetManager am = ctx.getResources().getAssets();
 					AssetFileDescriptor afd = am.openFd("www/".concat(assetPath));
-					FileDescriptor fd = afd.getFileDescriptor();
+					fd = afd.getFileDescriptor();
 				}
 				
 				NativeAudioAsset asset = new NativeAudioAsset(
