@@ -88,7 +88,8 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
 
 				String fullPath = assetPath;
 				FileDescriptor fd;
-				
+        AssetFileDescriptor afd;
+
 				// if it starts with a /, use a root path
 				if(fullPath.startsWith("/")) {
 					FileInputStream fileInputStream = new FileInputStream(new File(fullPath));
@@ -98,12 +99,12 @@ public class NativeAudio extends CordovaPlugin implements AudioManager.OnAudioFo
 				} else {
 					Context ctx = cordova.getActivity().getApplicationContext();
 					AssetManager am = ctx.getResources().getAssets();
-					AssetFileDescriptor afd = am.openFd("www/".concat(assetPath));
-					fd = afd.getFileDescriptor();
+					afd = am.openFd("www/".concat(assetPath));
+					//fd = afd.getFileDescriptor();
 				}
-				
+
 				NativeAudioAsset asset = new NativeAudioAsset(
-						fd, voices, (float)volume);
+						afd, voices, (float)volume);
 				assetMap.put(audioID, asset);
 
 				return new PluginResult(Status.OK);

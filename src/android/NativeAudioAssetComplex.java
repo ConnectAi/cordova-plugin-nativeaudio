@@ -32,7 +32,7 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 	private int state;
     Callable<Void> completeCallback;
 
-	public NativeAudioAssetComplex(FileDescriptor fd, float volume)  throws IOException
+	public NativeAudioAssetComplex(AssetFileDescriptor afd, float volume)  throws IOException
 	{
 	    ParcelFileDescriptor pfd = ParcelFileDescriptor.dup(fd);
 
@@ -40,7 +40,7 @@ public class NativeAudioAssetComplex implements OnPreparedListener, OnCompletion
 		mp = new MediaPlayer();
         mp.setOnCompletionListener(this);
         mp.setOnPreparedListener(this);
-		mp.setDataSource(fd, 0, pfd.getStatSize());
+		mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		mp.setVolume(volume, volume);
 		mp.prepare();
